@@ -4,22 +4,23 @@ namespace Nathanmac\Utilities\Parser\Tests;
 
 use \Mockery as m;
 use Nathanmac\Utilities\Parser\Parser;
+use PHPUnit\Framework\TestCase;
 
-class JSONTest extends \PHPUnit_Framework_TestCase
+class JSONTest extends TestCase
 {
     /**
      * Tear down after tests
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         m::close();
+        parent::tearDown();
     }
 
-    /** @test */
-    public function parse_auto_detect_json_data()
+    public function test_parse_auto_detect_json_data()
     {
         $parser = m::mock('Nathanmac\Utilities\Parser\Parser')
-            ->shouldDeferMissing()
+            ->makePartial()
             ->shouldAllowMockingProtectedMethods();
 
         $parser->shouldReceive('getFormatClass')
@@ -34,30 +35,27 @@ class JSONTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(['status' => 123, 'message' => 'hello world'], $parser->payload());
     }
 
-    /** @test */
-    public function parser_validates_json_data()
+    public function test_parser_validates_json_data()
     {
         $parser = new Parser();
         $this->assertEquals(['status' => 123, 'message' => 'hello world'], $parser->json('{"status":123, "message":"hello world"}'));
     }
 
-    /** @test */
-    public function parser_empty_json_data()
+    public function test_parser_empty_json_data()
     {
         $parser = new Parser();
         $this->assertEquals([], $parser->json(""));
     }
 
-    /** @test */
-    public function throws_an_exception_when_parsed_json_bad_data()
+    public function test_throws_an_exception_when_parsed_json_bad_data()
     {
         $parser = new Parser();
-        $this->setExpectedException('Exception', 'Failed To Parse JSON');
+        $this->expectException('Exception');
+        $this->expectExceptionMessage('Failed To Parse JSON');
         $parser->json('as|df>ASFBw924hg2=');
     }
 
-    /** @test */
-    public function format_detection_json()
+    public function test_format_detection_json()
     {
         $parser = new Parser();
 

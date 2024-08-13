@@ -4,22 +4,23 @@ namespace Nathanmac\Utilities\Parser\Tests;
 
 use \Mockery as m;
 use Nathanmac\Utilities\Parser\Parser;
+use PHPUnit\Framework\TestCase;
 
-class ParserTest extends \PHPUnit_Framework_TestCase
+class ParserTest extends TestCase
 {
     /**
      * Tear down after tests
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         m::close();
+        parent::tearDown();
     }
 
-    /** @test */
-    public function mask_payload()
+    public function test_mask_payload()
     {
         $parser = m::mock('Nathanmac\Utilities\Parser\Parser')
-            ->shouldDeferMissing()
+            ->makePartial()
             ->shouldAllowMockingProtectedMethods();
 
         $parser->shouldReceive('getPayload')
@@ -30,11 +31,10 @@ class ParserTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(['posts' => null], $parser->mask(['posts' => '*']));
     }
 
-    /** @test */
-    public function wildcards_with_simple_structure_json()
+    public function test_wildcards_with_simple_structure_json()
     {
         $parser = m::mock('Nathanmac\Utilities\Parser\Parser')
-            ->shouldDeferMissing()
+            ->makePartial()
             ->shouldAllowMockingProtectedMethods();
 
         $parser->shouldReceive('getPayload')
@@ -58,11 +58,10 @@ class ParserTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals("john.doe@example.com", $parser->get('email.:index[1]'));
     }
 
-    /** @test */
-    public function wildcards_with_array_structure_json()
+    public function test_wildcards_with_array_structure_json()
     {
         $parser = m::mock('Nathanmac\Utilities\Parser\Parser')
-            ->shouldDeferMissing()
+            ->makePartial()
             ->shouldAllowMockingProtectedMethods();
 
         $parser->shouldReceive('getPayload')
@@ -87,11 +86,10 @@ class ParserTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(['title' => 'world', 'message' => 'world hello'], $parser->get('comments.:index[1]'));
     }
 
-    /** @test */
-    public function array_structured_getPayload_json()
+    public function test_array_structured_getPayload_json()
     {
         $parser = m::mock('Nathanmac\Utilities\Parser\Parser')
-            ->shouldDeferMissing()
+            ->makePartial()
             ->shouldAllowMockingProtectedMethods();
 
         $parser->shouldReceive('getPayload')
@@ -101,11 +99,10 @@ class ParserTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(["comments" => [["title" => "hello", "message" => "hello world"], ["title" => "world", "message" => "hello world"]]], $parser->payload());
     }
 
-    /** @test */
-    public function alias_all_check()
+    public function test_alias_all_check()
     {
         $parser = m::mock('Nathanmac\Utilities\Parser\Parser')
-            ->shouldDeferMissing()
+            ->makePartial()
             ->shouldAllowMockingProtectedMethods();
 
         $parser->shouldReceive('getPayload')
@@ -115,11 +112,10 @@ class ParserTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(['status' => 123, 'message' => 'hello world'], $parser->all());
     }
 
-    /** @test */
-    public function return_value_for_multi_level_key()
+    public function test_return_value_for_multi_level_key()
     {
         $parser = m::mock('Nathanmac\Utilities\Parser\Parser')
-            ->shouldDeferMissing()
+            ->makePartial()
             ->shouldAllowMockingProtectedMethods();
 
         $parser->shouldReceive('getPayload')
@@ -137,11 +133,10 @@ class ParserTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(['id' => 123, 'status' => null, 'note' => ['body' => 'Hello World']], $parser->only('note.body', 'id', 'status'));
     }
 
-    /** @test */
-    public function return_value_for_selected_key_use_default_if_not_found()
+    public function test_return_value_for_selected_key_use_default_if_not_found()
     {
         $parser = m::mock('Nathanmac\Utilities\Parser\Parser')
-            ->shouldDeferMissing()
+            ->makePartial()
             ->shouldAllowMockingProtectedMethods();
 
         $parser->shouldReceive('getPayload')
@@ -153,11 +148,10 @@ class ParserTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('hello world', $parser->get('message'));
     }
 
-    /** @test */
-    public function return_boolean_value_if_getPayload_has_keys()
+    public function test_return_boolean_value_if_getPayload_has_keys()
     {
         $parser = m::mock('Nathanmac\Utilities\Parser\Parser')
-            ->shouldDeferMissing()
+            ->makePartial()
             ->shouldAllowMockingProtectedMethods();
 
         $parser->shouldReceive('getPayload')
@@ -169,11 +163,10 @@ class ParserTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($parser->has('note'));
     }
 
-    /** @test */
-    public function only_return_selected_fields()
+    public function test_only_return_selected_fields()
     {
         $parser = m::mock('Nathanmac\Utilities\Parser\Parser')
-            ->shouldDeferMissing()
+            ->makePartial()
             ->shouldAllowMockingProtectedMethods();
 
         $parser->shouldReceive('getPayload')
@@ -182,11 +175,10 @@ class ParserTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(['status' => 123], $parser->only('status'));
     }
 
-    /** @test */
-    public function except_do_not_return_selected_fields()
+    public function test_except_do_not_return_selected_fields()
     {
         $parser = m::mock('Nathanmac\Utilities\Parser\Parser')
-            ->shouldDeferMissing()
+            ->makePartial()
             ->shouldAllowMockingProtectedMethods();
 
         $parser->shouldReceive('getPayload')
@@ -197,8 +189,7 @@ class ParserTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(['status' => 123, 'message' => 'hello world'], $parser->except('message.tags'));
     }
 
-    /** @test */
-    public function format_detection_defaults_to_json()
+    public function test_format_detection_defaults_to_json()
     {
         $parser = new Parser();
 
@@ -209,11 +200,10 @@ class ParserTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('Nathanmac\Utilities\Parser\Formats\JSON', $parser->getFormatClass());
     }
 
-    /** @test */
-    public function throw_an_exception_when_parsed_auto_detect_mismatch_content_type()
+    public function test_throw_an_exception_when_parsed_auto_detect_mismatch_content_type()
     {
         $parser = m::mock('Nathanmac\Utilities\Parser\Parser')
-            ->shouldDeferMissing()
+            ->makePartial()
             ->shouldAllowMockingProtectedMethods();
 
         $parser->shouldReceive('getFormatClass')
@@ -224,12 +214,13 @@ class ParserTest extends \PHPUnit_Framework_TestCase
             ->once()
             ->andReturn("<?xml version=\"1.0\" encoding=\"UTF-8\"?><xml><status>123</status><message>hello world</message></xml>");
 
-        $this->setExpectedException('Exception', 'Failed To Parse Serialized Data');
-        $this->assertEquals(['status' => 123, 'message' => 'hello world'], $parser->payload());
+        $this->expectException('Exception');
+        $this->expectExceptionMessage('Failed To Parse Serialized Data');
+        $parser->payload();
+        // $this->assertEquals(['status' => 123, 'message' => 'hello world'], $parser->payload());
     }
 
-    /** @test */
-    public function can_register_format_classes()
+    public function test_can_register_format_classes()
     {
         // For some reason this won't autoload...
         require_once(__DIR__ . '/CustomFormatter.php');

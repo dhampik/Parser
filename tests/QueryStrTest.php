@@ -4,22 +4,23 @@ namespace Nathanmac\Utilities\Parser\Tests;
 
 use \Mockery as m;
 use Nathanmac\Utilities\Parser\Parser;
+use PHPUnit\Framework\TestCase;
 
-class QueryStrTest extends \PHPUnit_Framework_TestCase
+class QueryStrTest extends TestCase
 {
     /**
      * Tear down after tests
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         m::close();
+        parent::tearDown();
     }
 
-    /** @test */
-    public function parse_auto_detect_query_string_data()
+    public function test_parse_auto_detect_query_string_data()
     {
         $parser = m::mock('Nathanmac\Utilities\Parser\Parser')
-            ->shouldDeferMissing()
+            ->makePartial()
             ->shouldAllowMockingProtectedMethods();
 
         $parser->shouldReceive('getFormatClass')
@@ -33,22 +34,19 @@ class QueryStrTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(['status' => 123, 'message' => 'hello world'], $parser->payload());
     }
 
-    /** @test */
-    public function parser_validates_query_string_data()
+    public function test_parser_validates_query_string_data()
     {
         $parser = new Parser();
         $this->assertEquals(['status' => 123, 'message' => 'hello world'], $parser->querystr('status=123&message=hello world'));
     }
 
-    /** @test */
-    public function parser_empty_query_string_data()
+    public function test_parser_empty_query_string_data()
     {
         $parser = new Parser();
         $this->assertEquals([], $parser->querystr(""));
     }
 
-    /** @test */
-    public function format_detection_query_string()
+    public function test_format_detection_query_string()
     {
         $parser = new Parser();
 

@@ -4,22 +4,23 @@ namespace Nathanmac\Utilities\Parser\Tests;
 
 use \Mockery as m;
 use Nathanmac\Utilities\Parser\Parser;
+use PHPUnit\Framework\TestCase;
 
-class YamlTest extends \PHPUnit_Framework_TestCase
+class YamlTest extends TestCase
 {
     /**
      * Tear down after tests
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         m::close();
+        parent::tearDown();
     }
 
-    /** @test */
-    public function parse_auto_detect_serialized_data()
+    public function test_parse_auto_detect_serialized_data()
     {
         $parser = m::mock('Nathanmac\Utilities\Parser\Parser')
-            ->shouldDeferMissing()
+            ->makePartial()
             ->shouldAllowMockingProtectedMethods();
 
         $parser->shouldReceive('getFormatClass')
@@ -35,8 +36,7 @@ message: "hello world"');
         $this->assertEquals(['status' => 123, 'message' => 'hello world'], $parser->payload());
     }
 
-    /** @test */
-    public function parser_validates_yaml_data()
+    public function test_parser_validates_yaml_data()
     {
         $parser = new Parser();
         $this->assertEquals(['status' => 123, 'message' => 'hello world'], $parser->yaml('---
@@ -44,24 +44,22 @@ status: 123
 message: "hello world"'));
     }
 
-    /** @test */
-    public function parser_empty_yaml_data()
+    public function test_parser_empty_yaml_data()
     {
         $parser = new Parser();
         $this->assertEquals([], $parser->yaml(""));
     }
 
-    /** @test */
-    public function throws_an_exception_when_parsed_yaml_bad_data()
+    public function test_throws_an_exception_when_parsed_yaml_bad_data()
     {
         $parser = new Parser();
-        $this->setExpectedException('Exception', 'Failed To Parse YAML');
+        $this->expectException('Exception');
+        $this->expectExceptionMessage('Failed To Parse YAML');
         $parser->yaml('as|df>ASFBw924hg2=
                         sfgsaf:asdfasf');
     }
 
-    /** @test */
-    public function format_detection_yaml()
+    public function test_format_detection_yaml()
     {
         $parser = new Parser();
 
