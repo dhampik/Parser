@@ -31,7 +31,7 @@ class BSON implements FormatInterface
         }
 
         if ($payload) {
-            $prevHandler = set_error_handler(function ($errno, $errstr, $errfile, $errline, $errcontext) {
+            set_error_handler(function (int $errno, string $errstr) {
                 throw new \Exception($errstr);  // @codeCoverageIgnore
             });
 
@@ -41,11 +41,11 @@ class BSON implements FormatInterface
                     throw new \Exception('Unknown error');  // @codeCoverageIgnore
                 }
             } catch (\Exception $e) {
-                set_error_handler($prevHandler);
+                restore_error_handler();
                 throw new ParserException('Failed To Parse BSON - ' . $e->getMessage());
             }
 
-            set_error_handler($prevHandler);
+            restore_error_handler();
 
             return $bson;
         }

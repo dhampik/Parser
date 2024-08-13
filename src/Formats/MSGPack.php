@@ -26,7 +26,7 @@ class MSGPack implements FormatInterface
     {
         if (function_exists('msgpack_unpack')) {
             if ($payload) {
-                $prevHandler = set_error_handler(function ($errno, $errstr, $errfile, $errline, $errcontext) {
+                set_error_handler(function (int $errno, string $errstr) {
                     throw new \Exception($errstr);  // @codeCoverageIgnore
                 });
 
@@ -36,11 +36,11 @@ class MSGPack implements FormatInterface
                         throw new \Exception('Unknown error');  // @codeCoverageIgnore
                     }
                 } catch (\Exception $e) {
-                    set_error_handler($prevHandler);
+                    restore_error_handler();
                     throw new ParserException('Failed To Parse MSGPack - ' . $e->getMessage());
                 }
 
-                set_error_handler($prevHandler);
+                restore_error_handler();
 
                 return $msg;
             }
