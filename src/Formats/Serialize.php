@@ -26,7 +26,11 @@ class Serialize implements FormatInterface
     {
         if ($payload) {
             try {
-                return unserialize(trim($payload));
+                $data = @unserialize(trim($payload));
+                if ($payload === 'b:0;' || $data !== false) {
+                    return $data;
+                }
+                throw new ParserException('Failed To Parse Serialized Data');
             } catch (\Exception $ex) {
                 throw new ParserException('Failed To Parse Serialized Data');
             }

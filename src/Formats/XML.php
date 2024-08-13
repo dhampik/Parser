@@ -27,6 +27,9 @@ class XML implements FormatInterface
         if ($payload) {
             try {
                 $xml = simplexml_load_string($payload, 'SimpleXMLElement', (LIBXML_VERSION >= 20700) ? (LIBXML_PARSEHUGE | LIBXML_NOCDATA) : LIBXML_NOCDATA);
+                if($xml === false) {
+                    throw new ParserException('Failed To Parse XML');
+                }
                 $ns = ['' => null] + $xml->getDocNamespaces(true);
                 return $this->recursive_parse($xml, $ns);
             } catch (\Exception $ex) {
