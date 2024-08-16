@@ -1,0 +1,52 @@
+name: PHP CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        php-version: [8.1, 8.2, 8.3]
+        env:
+          - 'BSON=0 MSGPACK=0'
+          - 'BSON=0 MSGPACK=1'
+          - 'BSON=mongo MSGPACK=0'
+          - 'BSON=mongodb MSGPACK=0'
+          - 'BSON=mongodb MSGPACK=1'
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up PHP ${{ matrix.php-version }}
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php-version }}
+
+    - name: Install MSGPack if needed
+      if: env.MSGPACK == '1'
+      run: |
+        wget https://github.com/msgpack/msgpack-php/archive/master.zip -O php-msgpack.zip && unzip php-msgpack.zip && mv msgpack-php-master msgpack-php;
+        cd msgpack-php/ && phpize && ./configure && make && make install
+        echo "extension=msgpack.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`
+
+    - name: Install MongoDB if needed
+      if: env.BSON == 'mongodb'
+      run: |
+        git clone --depth=50 --recursive https://github.com/mongodb/mongo-php-driver/
+        cd mongo-php-driver/ && git submodule status --recursive
+
+    - name: Install dependencies
+      run: |
+        composer self-update
+        composer update ${COMPOSER_FLAGS} --no-interaction --prefer-source
+
+    - name: Run tests
+      run: vendor/bin/phpunit
