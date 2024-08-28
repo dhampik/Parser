@@ -21,7 +21,8 @@ Begin by installing this package through Composer. From the Terminal:
 
 Laravel/Lumen Verison | Supported Library Verison
 ----------------------|--------------------------
-Laravel/Lumen 5+ | > 3.*
+Laravel 11+ | > 5.*
+Laravel/Lumen 5+ | 3.* / 4.*
 Laravel 4  | 2.*
 
 #### Laravel Users (Adding the Service Provider)
