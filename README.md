@@ -3,7 +3,7 @@ Parser
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/nathanmac/Parser.svg?style=flat-square)](https://packagist.org/packages/nathanmac/parser)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
-[![Build Status](https://img.shields.io/travis/nathanmac/Parser/master.svg?style=flat-square)](https://travis-ci.org/nathanmac/Parser)
+[![Build Status](https://github.com/flofloflo/Parser/actions/workflows/php.yml/badge.svg?branch=master)](https://github.com/flofloflo/Parser/actions/workflows/php.yml)
 [![Total Downloads](https://img.shields.io/packagist/dt/nathanmac/Parser.svg?style=flat-square)](https://packagist.org/packages/nathanmac/Parser)
 
 Simple PHP Parser Library for API Development, parse a post http payload into a php array.
